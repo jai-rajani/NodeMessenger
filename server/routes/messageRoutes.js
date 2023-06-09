@@ -1,9 +1,10 @@
 const { Router } = require("express");
 
-const { sendMessage } = require("../controllers/messageController");
+const { sendMessage, getMessages } = require("../controllers/messageController");
 const router = Router();
 
 router.post('/create', sendMessage);
+router.post('/get',getMessages);
 
 
 

@@ -9,9 +9,12 @@ const mongoose=require('mongoose')
 
 const profileRoutes=require('./routes/profileroutes')
 const messageRoutes=require('./routes/messageRoutes')
+
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const socket = require('./socket'); 
+
+/* const { Server } = require("socket.io");
+const io = new Server(server); */
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -24,21 +27,26 @@ const MONGO_URI = process.env.MONGO_URI;
 
 
 app.get('/',(req,res)=>{
-   console.log(req.body)
-   res.json({mssg:'Welcome to the app',request:req.body})
+   
+   res.sendFile(__dirname + '/index.html');
 })
 
 app.use('/api/user',profileRoutes);
 app.use('/api/message',messageRoutes)
 
-io.on('connection', (socket) => {
+/* io.on('connection', (socket) => {
     console.log('a user connected');
-  });
+    socket.on('disconnect', function() {
+        console.log('Client disconnected.');
+    });
+  }); */
+
+socket.initializeSocket(server); 
 
 mongoose.connect(MONGO_URI)
     .then(()=>{
         
-    app.listen(process.env.PORT,()=>{
+    server.listen(process.env.PORT,()=>{
         console.log('Listening on port 4000')
     })
 

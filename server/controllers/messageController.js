@@ -2,16 +2,30 @@ const express = require('express');
 const router = express.Router();
 
 const Message=require('../models/message');
+const Profile = require('../models/profile');
+const { io, sendMessageIO } = require('../socket');
 
 const sendMessage=async(req,res)=>{
     try {
-        console.log(req.body)
+        const {sender,receiver}=req.body;
+
+        //check if receiver has an open profile
+        
+        const receiver_profile=await Profile.findById(receiver);
+      
+        if(receiver_profile.open==false){
+          res.status(200).json('User profile is private!');
+        }
+        else{
         const message = new Message(req.body);
         await message.save();
+        sendMessageIO(message)
         res.status(200).json(message);
-      } catch (error) {
+       }} 
+      catch (error) {
         res.status(400).json({ error: error.message });
       }
+      
     };
 
 const getMessages=async(req,res)=>{
@@ -26,4 +40,4 @@ const getMessages=async(req,res)=>{
 
 }
 
-module.exports={sendMessage}
+module.exports={sendMessage,getMessages}

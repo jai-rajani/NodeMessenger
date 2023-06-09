@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const messageSchema = new mongoose.Schema({
   message:{
     type:String,
-    required:true
+    required:true,
+    maxlength:[100,'Max message length is 100']
   },
   sender:{
     type:mongoose.Schema.Types.ObjectId, ref: 'profiles'
